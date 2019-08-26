@@ -207,7 +207,7 @@ class PlainTextEdit(QPlainTextEdit):
             self.appendPlainText(" ".join(command_list[1:]))
 
         elif real_command == "exit":
-            self.close()
+            quit()
 
         elif command_list is not None and command_list[0] == "cd" and len(command_list) > 1:
             try:
@@ -218,19 +218,6 @@ class PlainTextEdit(QPlainTextEdit):
 
             except FileNotFoundError as E:
                 self.appendPlainText(str(E))
-
-#### ls
-#        elif real_command == "ls":
-##            print("is ls command")
-#            try:
-#                self.run(real_command)
-#                self.name = (str(getpass.getuser()) + "@" + str(socket.gethostname()) 
-#                                        + ":" + str(os.getcwd()) + "$ ")
-#                self.textCursor().movePosition(QTextCursor.End)
-##                self.process.waitForFinished()
-#
-#            except FileNotFoundError as E:
-#                self.appendPlainText(str(E))
 
         elif command_list is not None and len(command_list) == 1 and command_list[0] == "cd":
             os.chdir(str(Path.home()))
