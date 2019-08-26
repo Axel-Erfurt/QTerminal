@@ -9,4 +9,9 @@ I have removed a lot of code and changed a lot.
 - python3
 - PyQt5
 
+### Notes:
+
+- you can drag files or text to the window
+- commands list and geometry will be saved
+
 ![screenshot](https://github.com/Axel-Erfurt/QTerminal/blob/master/screenhotQTerminal.png)
