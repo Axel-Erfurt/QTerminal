@@ -7,13 +7,14 @@ import socket
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QApplication, QPlainTextEdit, QMainWindow
 from PyQt5.QtGui import QFont, QTextCursor
-from PyQt5.QtCore import Qt, pyqtSignal, QProcess, QCoreApplication, QSettings
+from PyQt5.QtCore import Qt, pyqtSignal, QProcess, QCoreApplication, QSettings, QEvent, QPoint, QSize
 
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None, movable=False):
         super(MainWindow, self).__init__()
        
+        self.setAcceptDrops(True)
         self.shellWin = PlainTextEdit()
         self.setCentralWidget(self.shellWin)
         self.setGeometry(0, 0, 600, 600)
@@ -27,9 +28,17 @@ class MainWindow(QMainWindow):
     def readSettings(self):
         if self.settings.contains("commands"):
             self.shellWin.commands = self.settings.value("commands")
+        if self.settings.contains("pos"):
+            pos = self.settings.value("pos", QPoint(200, 200))
+            self.move(pos)
+        if self.settings.contains("size"):
+            size = self.settings.value("size", QSize(400, 400))
+            self.resize(size)
 
     def writeSettings(self):
         self.settings.setValue("commands", self.shellWin.commands)
+        self.settings.setValue("pos", self.pos())
+        self.settings.setValue("size", self.size())
 
 class PlainTextEdit(QPlainTextEdit):
     commandSignal = pyqtSignal(str)
@@ -38,6 +47,8 @@ class PlainTextEdit(QPlainTextEdit):
     def __init__(self, parent=None, movable=False):
         super(PlainTextEdit, self).__init__()
 
+        self.installEventFilter(self)
+        self.setAcceptDrops(True)
         QApplication.setCursorFlashTime(1000)
         self.process = QProcess()
         self.process.readyReadStandardError.connect(self.onReadyReadStandardError)
@@ -54,6 +65,32 @@ class PlainTextEdit(QPlainTextEdit):
         self.text = None
         self.setFont(QFont("Noto Sans Mono", 8))
         self.previousCommandLength = 0
+
+
+    def eventFilter(self, source, event):
+        if (event.type() == QEvent.DragEnter):
+            event.accept()
+            print ('DragEnter')
+            return True
+        elif (event.type() == QEvent.Drop):
+            print ('Drop')
+            self.setDropEvent(event)
+            return True
+        else:
+            return False ### super(QPlainTextEdit).eventFilter(event)
+
+    def setDropEvent(self, event):
+        if event.mimeData().hasUrls():
+            f = str(event.mimeData().urls()[0].toLocalFile())
+            self.insertPlainText(f)
+            event.accept()
+        elif event.mimeData().hasText():
+            ft = event.mimeData().text()
+            print("text:", ft)
+            self.insertPlainText(ft)
+            event.accept()
+        else:
+            event.ignore()
 
     def keyPressEvent(self, e):
         cursor = self.textCursor()
@@ -141,6 +178,7 @@ class PlainTextEdit(QPlainTextEdit):
         """Executes a system command."""
         if self.process.state() != 2:
             self.process.start(command)
+            self.process.waitForFinished()
             self.textCursor().movePosition(QTextCursor.End)
 
 
@@ -181,18 +219,18 @@ class PlainTextEdit(QPlainTextEdit):
             except FileNotFoundError as E:
                 self.appendPlainText(str(E))
 
-### ls
-        elif real_command == "ls":
-#            print("is ls command")
-            try:
-                self.run(real_command)
-                self.name = (str(getpass.getuser()) + "@" + str(socket.gethostname()) 
-                                        + ":" + str(os.getcwd()) + "$ ")
-                self.textCursor().movePosition(QTextCursor.End)
-                self.process.waitForFinished()
-
-            except FileNotFoundError as E:
-                self.appendPlainText(str(E))
+#### ls
+#        elif real_command == "ls":
+##            print("is ls command")
+#            try:
+#                self.run(real_command)
+#                self.name = (str(getpass.getuser()) + "@" + str(socket.gethostname()) 
+#                                        + ":" + str(os.getcwd()) + "$ ")
+#                self.textCursor().movePosition(QTextCursor.End)
+##                self.process.waitForFinished()
+#
+#            except FileNotFoundError as E:
+#                self.appendPlainText(str(E))
 
         elif command_list is not None and len(command_list) == 1 and command_list[0] == "cd":
             os.chdir(str(Path.home()))
