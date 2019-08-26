@@ -5,9 +5,9 @@ import os
 import getpass
 import socket
 from pathlib import Path
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QPlainTextEdit, QDesktopWidget, QApplication, QMainWindow
-from PyQt5.QtGui import QTextCharFormat, QColor, QFont, QTextCursor, QKeyEvent
-from PyQt5.QtCore import Qt, pyqtSignal, QRegExp, QProcess, QThread, QEvent, QCoreApplication, QSettings
+from PyQt5.QtWidgets import QWidget, QApplication, QPlainTextEdit, QMainWindow
+from PyQt5.QtGui import QFont, QTextCursor
+from PyQt5.QtCore import Qt, pyqtSignal, QProcess, QCoreApplication, QSettings
 
 
 class MainWindow(QMainWindow):
