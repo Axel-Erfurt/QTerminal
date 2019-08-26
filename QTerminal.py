@@ -79,7 +79,7 @@ class PlainTextEdit(QPlainTextEdit):
 
             if text == self.name + text.replace(self.name, "") and text.replace(self.name, "") != "":  # This is to prevent adding in commands that were not meant to be added in
                 self.commands.append(text.replace(self.name, ""))
-                print(self.commands)
+#                print(self.commands)
             self.handle(text)
             self.commandSignal.emit(text)
             self.appendPlainText(self.name)
@@ -135,7 +135,7 @@ class PlainTextEdit(QPlainTextEdit):
         self.result = self.process.readAllStandardOutput().data().decode()
         self.appendPlainText(self.result.strip('\n'))
         self.state = self.process.state()
-        print(self.result)
+#        print(self.result)
 
     def run(self, command):
         """Executes a system command."""
@@ -145,7 +145,7 @@ class PlainTextEdit(QPlainTextEdit):
 
 
     def handle(self, command):
-        print("begin handle") 
+#        print("begin handle") 
         """Split a command into list so command echo hi would appear as ['echo', 'hi']"""
         real_command = command.replace(self.name, "")
 
@@ -183,7 +183,7 @@ class PlainTextEdit(QPlainTextEdit):
 
 ### ls
         elif real_command == "ls":
-            print("is ls command")
+#            print("is ls command")
             try:
                 self.run(real_command)
                 self.name = (str(getpass.getuser()) + "@" + str(socket.gethostname()) 
@@ -208,8 +208,6 @@ class PlainTextEdit(QPlainTextEdit):
             self.run(real_command)
         else:
             pass
-
-    # When the user does a command like ls and then presses enter then it wont read the line where the cursor is on as a command
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
