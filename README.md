@@ -9,4 +9,4 @@ I have removed a lot of code and changed a lot.
 - python3
 - PyQt5
 
-
+![screenshot](https://github.com/Axel-Erfurt/QTerminal/blob/master/screenhotQTerminal.png)
