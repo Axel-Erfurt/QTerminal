@@ -202,7 +202,6 @@ class MainWindow(QMainWindow):
         self.textWindow.appendPlainText(self.commandfield.toPlainText())
         cli = shlex.split(self.commandfield.toPlainText().replace(self.name, '').replace("'", '"'), posix=False)
         cmd = str(cli[0]) ### is the executable
-#        print(cmd)
 
         if cmd == "exit":
             quit()
@@ -225,8 +224,13 @@ class MainWindow(QMainWindow):
                 if self.process.state() != 2:
                     self.process.waitForStarted()
                     self.process.waitForFinished()
-                    self.process.start((cmd + " " + t))
-                    print("running", (cmd + " " + t))
+                    if "|" in t or ">" in t or "<" in t:
+                        print("special characters")
+                        self.process.start('sh -c "' + cmd + ' ' + t + '"')
+                        print("running",('sh -c "' + cmd + ' ' + t + '"'))
+                    else:
+                        self.process.start(cmd + " " + t)
+                        print("running", (cmd + " " + t))
             else:
                 print("command not found ...")
                 self.textWindow.appendPlainText("command not found ...")
@@ -258,7 +262,6 @@ class MainWindow(QMainWindow):
                                 + ":" + str(os.getcwd()) + "$ ")
         self.commandfield.setPlainText(self.name)
         self.cursorEnd()
-        print("count", self.commandfield.blockCount())
 
     def readSettings(self):
         if self.settings.contains("commands"):
@@ -339,3 +342,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
