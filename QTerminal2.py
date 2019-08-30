@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -- coding: utf-8 --
 from PyQt5.QtCore import QProcess, QSysInfo, QStandardPaths, Qt, QEvent, QSettings, QPoint, QSize
 from PyQt5.QtWidgets import QWidget, QApplication, QLineEdit, QPlainTextEdit, QVBoxLayout, QMainWindow, QAction
