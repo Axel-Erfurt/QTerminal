@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# -- coding: utf-8 --
 from PyQt5.QtCore import QProcess, QSysInfo, QStandardPaths, Qt, QEvent, QSettings, QPoint, QSize
 from PyQt5.QtWidgets import QWidget, QApplication, QLineEdit, QPlainTextEdit, QVBoxLayout, QMainWindow, QAction
 from PyQt5.QtGui import QIcon, QTextCursor, QKeyEvent
@@ -19,6 +18,7 @@ class MainWindow(QMainWindow):
         self.commandslist = []
         self.tracker = 0
         os.chdir(os.path.expanduser("~"))
+#        print(os.getcwd())
         self.name = (str(getpass.getuser()) + "@" + str(socket.gethostname()) 
                                 + ":" + str(os.getcwd()) + "$ ")
         self.setWindowTitle('PyQt5Terminal')
