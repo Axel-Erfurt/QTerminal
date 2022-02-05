@@ -83,73 +83,67 @@ class MainWindow(QMainWindow):
         self.commandfield.setFocus()
 
     def eventFilter(self, source, event):
-        if source == self.commandfield:
-            if (event.type() == QEvent.DragEnter):
-                event.accept()
-                return True
-            elif (event.type() == QEvent.Drop):
-                print ('Drop')
-                self.setDropEvent(event)
-                return True
-            elif (event.type() == QEvent.KeyPress):
-                cursor = self.commandfield.textCursor()
+        if source == self.commandfield and (event.type() == QEvent.DragEnter):
+            event.accept()
+            return True
+        elif (
+            source == self.commandfield
+            and event.type() != QEvent.DragEnter
+            and event.type() == QEvent.Drop
+        ):
+            print ('Drop')
+            self.setDropEvent(event)
+            return True
+        elif (
+            source == self.commandfield
+            and event.type() != QEvent.DragEnter
+            and event.type() != QEvent.Drop
+            and event.type() == QEvent.KeyPress
+        ):
+            cursor = self.commandfield.textCursor()
 #                print('key press:', (event.key(), event.text()))
-                if event.key() == Qt.Key_Backspace:
-                    if cursor.positionInBlock() <= len(self.name):
-                        return True
-                    else:
-                        return False
-        
-                elif event.key() == Qt.Key_Return:
-                    self.run()
-                    return True
-        
-                elif event.key() == Qt.Key_Left:
-                    if cursor.positionInBlock() <= len(self.name):
-                        return True
-                    else:
-                        return False
-            
-                elif event.key() == Qt.Key_Delete:
-                    if cursor.positionInBlock() <= len(self.name) - 1:
-                        return True
-                    else:
-                        return False
+            if event.key() == Qt.Key_Backspace:
+                return cursor.positionInBlock() <= len(self.name)
+            elif event.key() == Qt.Key_Return:
+                self.run()
+                return True
 
-                elif event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_C:
-                    self.killProcess()
-                    return True
+            elif event.key() == Qt.Key_Left:
+                return cursor.positionInBlock() <= len(self.name)
+            elif event.key() == Qt.Key_Delete:
+                return cursor.positionInBlock() <= len(self.name) - 1
+            elif event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_C:
+                self.killProcess()
+                return True
 
-                elif event.key() == Qt.Key_Up:
-                    try:
-                        if self.tracker != 0:
-                            cursor.select(QTextCursor.BlockUnderCursor)
-                            cursor.removeSelectedText()
-                            self.commandfield.appendPlainText(self.name)
-        
-                        self.commandfield.insertPlainText(self.commandslist[self.tracker])
-                        self.tracker -= 1
-        
-                    except IndexError:
-                        self.tracker = 0
-                    return True
+            elif event.key() == Qt.Key_Up:
+                try:
+                    if self.tracker != 0:
+                        cursor.select(QTextCursor.BlockUnderCursor)
+                        cursor.removeSelectedText()
+                        self.commandfield.appendPlainText(self.name)
 
-                elif event.key() == Qt.Key_Down:
-                    try:
-                        if self.tracker != 0:
-                            cursor.select(QTextCursor.BlockUnderCursor)
-                            cursor.removeSelectedText()
-                            self.commandfield.appendPlainText(self.name)
-        
-                        self.commandfield.insertPlainText(self.commandslist[self.tracker])
-                        self.tracker += 1
-        
-                    except IndexError:
-                        self.tracker = 0
-                    return True
+                    self.commandfield.insertPlainText(self.commandslist[self.tracker])
+                    self.tracker -= 1
 
-                else:
-                    return False
+                except IndexError:
+                    self.tracker = 0
+                return True
+
+            elif event.key() == Qt.Key_Down:
+                try:
+                    if self.tracker != 0:
+                        cursor.select(QTextCursor.BlockUnderCursor)
+                        cursor.removeSelectedText()
+                        self.commandfield.appendPlainText(self.name)
+
+                    self.commandfield.insertPlainText(self.commandslist[self.tracker])
+                    self.tracker += 1
+
+                except IndexError:
+                    self.tracker = 0
+                return True
+
             else:
                 return False
         else:
