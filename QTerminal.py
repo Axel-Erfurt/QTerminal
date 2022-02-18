@@ -187,18 +187,14 @@ class PlainTextEdit(QPlainTextEdit):
         """Split a command into list so command echo hi would appear as ['echo', 'hi']"""
         real_command = command.replace(self.name, "")
 
-        if command == "True":
-            if self.process.state() == 2:
-                self.process.kill()
-                self.appendPlainText("Program execution killed, press enter")
+        if command == "True" and self.process.state() == 2:
+            self.process.kill()
+            self.appendPlainText("Program execution killed, press enter")
 
         if real_command.startswith("python"):
             pass
 
-        if real_command != "":
-            command_list = real_command.split()
-        else:
-            command_list = None
+        command_list = real_command.split() if real_command != "" else None
         """Now we start implementing some commands"""
         if real_command == "clear":
             self.clear()
@@ -231,8 +227,6 @@ class PlainTextEdit(QPlainTextEdit):
 
         elif command == self.name + real_command:
             self.run(real_command)
-        else:
-            pass
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
